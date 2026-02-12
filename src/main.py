@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 # from prometheus_fastapi_instrumentator import Instrumentator
 
-# from src.api import main_api_router
+from src.api import main_api_router
 from src.core.config import Settings
 from src.core.errors.handlers import exception_handlers
 from src.core.logger import configure_logging
@@ -34,7 +34,7 @@ app.add_middleware(
 )
 
 # Include API routes
-# app.include_router(main_api_router, prefix="/api")
+app.include_router(main_api_router, prefix="/api")
 
 # Instrument the application with Prometheus metrics
 # Instrumentator(

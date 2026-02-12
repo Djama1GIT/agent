@@ -32,6 +32,9 @@ class Settings(BaseSettings):
     TITLE: str
     """Title of the API documentation."""
 
+    DEFAULT_MODEL: str
+    """Default of LLM."""
+
     DESCRIPTION: str
     """Detailed description of the API."""
 
