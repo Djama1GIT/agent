@@ -17,8 +17,13 @@ router = APIRouter(
 
 
 @router.post("/", response_model=ResponseSchema)
-async def create_article(
+async def send_message(
         message: str,
         agent: Annotated[Agent, Depends(get_agent(get_settings))],
 ) -> ResponseSchema:
-    return agent.send_msg_to_agent(message)
+    logger.info(f"Sending message: {message}")
+
+    response = agent.send_msg_to_agent(message)
+
+    logger.info(f"Received response: {response}")
+    return response

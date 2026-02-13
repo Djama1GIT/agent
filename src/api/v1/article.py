@@ -21,4 +21,9 @@ async def create_article(
         article_name: str,
         article_agent: Annotated[ArticleAgent, Depends(get_article_agent(get_settings))],
 ) -> ArticleSchema:
-    return article_agent.generate(article_name)
+    logger.info(f"Generating article: {article_name}")
+
+    article = article_agent.generate(article_name)
+
+    logger.info(f"Generated article: {article.summary}")
+    return article
