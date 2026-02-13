@@ -3,6 +3,7 @@ from typing import Generator, Callable
 from fastapi import Depends
 
 from src.core.config import Settings
+from src.schemas.agent import AgentConfig
 from src.services.article_agent import ArticleAgent
 
 
@@ -30,7 +31,12 @@ def get_article_agent(get_settings) -> Callable[[Settings], Generator[ArticleAge
         Raises:
             RuntimeError: If S3 client initialization fails.
         """
+        config = AgentConfig(
+            model=settings.DEFAULT_MODEL,
+            settings=settings,
+            web_search=False,
+        )
 
-        yield ArticleAgent(settings)
+        yield ArticleAgent(config)
 
     return _get_article_agent

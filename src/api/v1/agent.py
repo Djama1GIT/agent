@@ -23,7 +23,7 @@ async def send_message(
 ) -> ResponseSchema:
     logger.info(f"Sending message: {message}")
 
-    response = agent.send_msg_to_agent(message)
+    response = agent.send_message(message)
 
     logger.info(f"Received response: {response}")
     return response
