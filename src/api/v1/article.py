@@ -25,5 +25,5 @@ async def create_article(
 
     article = article_agent.generate(article_name)
 
-    logger.info(f"Generated article: {article.summary}")
+    logger.info(f"Generated article: {article.summary[:100]}...")
     return article
