@@ -97,7 +97,6 @@ services:
       - prometheus
     restart: always
     env_file:
-      - .env
       - .env-non-dev
     networks:
       - agent

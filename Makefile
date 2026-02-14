@@ -1,7 +1,7 @@
 .PHONY: run-tests run-tests-cov
 
 run-tests:
-	pytest -v
+	. .venv/bin/activate && pytest -v
 
 run-tests-cov:
-	pytest --cov-report=html --cov=src
+	. .venv/bin/activate && pytest --cov-report=html --cov=src
