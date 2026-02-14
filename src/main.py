@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-# from prometheus_fastapi_instrumentator import Instrumentator
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from src.api import main_api_router
 from src.core.config import Settings
@@ -37,7 +37,7 @@ app.add_middleware(
 app.include_router(main_api_router, prefix="/api")
 
 # Instrument the application with Prometheus metrics
-# Instrumentator(
-#     should_instrument_requests_inprogress=True,
-#     inprogress_labels=True,
-# ).instrument(app).expose(app)
+Instrumentator(
+    should_instrument_requests_inprogress=True,
+    inprogress_labels=True,
+).instrument(app).expose(app)

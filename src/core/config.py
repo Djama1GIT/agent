@@ -4,7 +4,7 @@ from typing import List, Dict, Any
 
 from dotenv import load_dotenv
 from pydantic import field_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 load_dotenv()
 
@@ -20,9 +20,7 @@ class Settings(BaseSettings):
     Configuration:
         - env_file (str): Specifies the .env file to load (default: '.env')
     """
-
-    class Config:
-        env_file = ".env"
+    model_config = SettingsConfigDict(env_file='.env')
 
     # Application settings
     APP_FILES_PATH: Path

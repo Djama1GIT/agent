@@ -51,15 +51,17 @@ class Agent:
     def __init__(
             self,
             config: Optional[AgentConfig] = None,
+            settings: Optional[Settings] = None,
             ai_client: Optional[AIClient] = None,
     ):
+        self.settings = settings or Settings()  # noqa
         self.config = config or self._create_default_config()
         self.ai_client = ai_client or G4FClientAdapter()
         logger.info(f"Agent initialized with model: {self.config.model}")
 
-    @staticmethod
-    def _create_default_config() -> AgentConfig:
-        settings = Settings()  # noqa
+
+    def _create_default_config(self) -> AgentConfig:
+        settings = self.settings
         return AgentConfig(
             model=settings.DEFAULT_MODEL,
             web_search=False,
