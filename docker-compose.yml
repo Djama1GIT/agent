@@ -1,0 +1,107 @@
+networks:
+  agent:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "172.20.0.0/24"
+
+services:
+  promtail:
+    image: grafana/promtail:latest
+    container_name: agent_promtail
+    ports:
+      - "9080"
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro,rshared
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./promtail-config.yaml:/etc/promtail/config.yml
+    command: -config.file=/etc/promtail/config.yml
+    privileged: true
+    networks:
+      - agent
+
+  loki:
+    image: grafana/loki:latest
+    container_name: agent_loki
+    ports:
+      - "3100"
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml
+    networks:
+      - agent
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: agent_prometheus
+    ports:
+      - "9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheusdata:/prometheus
+    networks:
+      - agent
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: agent_grafana
+    ports:
+      - "3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:%(http_port)s/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    volumes:
+      - ./grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - grafanadata:/var/lib/grafana
+    networks:
+      - agent
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agent_backend
+    ports:
+      - "8000"
+    restart: always
+    env_file:
+      - .env-non-dev
+    logging:
+      driver: json-file
+      options:
+        tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+    deploy:
+      resources:
+        limits:
+          cpus: '12'
+          memory: 12GB
+        reservations:
+          cpus: '6'
+          memory: 8GB
+    networks:
+      - agent
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: agent_nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - grafana
+      - loki
+      - promtail
+      - prometheus
+    restart: always
+    env_file:
+      - .env
+      - .env-non-dev
+    networks:
+      - agent
+
+volumes:
+  grafanadata:
+  prometheusdata:
